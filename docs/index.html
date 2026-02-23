@@ -8,9 +8,13 @@
 </head>
 <body>
   <header>
-    <h1>MKIK Beszállító Kereső</h1>
+    <h1>MKIK Akkreditált IT Beszállítók</h1>
     <button id="settings-btn" title="Beállítások">&#9881; Beállítások</button>
   </header>
+
+  <div class="disclaimer-banner">
+    Az adatok forrása: <a href="https://vallalkozzdigitalisan.mkik.hu/szallitok" target="_blank" rel="noopener">MKIK &ldquo;Vállalkozz Digitálisan&rdquo; beszállítói adatbázis</a> (2025. február). Az adatok nem valós idejűek, a legfrissebb információkért látogasd meg az eredeti oldalt.
+  </div>
 
   <div class="container">
     <aside id="sidebar">
@@ -55,6 +59,9 @@
       <div id="api-key-display" class="hidden">
         Mentett kulcs: <code id="api-key-masked"></code>
       </div>
+      <p class="api-key-help">
+        API kulcs beszerzése: regisztrálj a <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com</a> oldalon, majd hozz létre egy új API kulcsot. A kulcs <code>sk-</code> előtaggal kezdődik.
+      </p>
       <div class="modal-actions">
         <button id="api-key-save">Mentés</button>
         <button id="api-key-delete" class="danger">Törlés</button>

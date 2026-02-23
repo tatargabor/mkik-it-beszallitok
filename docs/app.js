@@ -36,6 +36,7 @@ function renderCountyFilter() {
     cb.addEventListener('change', () => {
       if (cb.checked) selectedCounties.add(name);
       else selectedCounties.delete(name);
+      label.classList.toggle('checked', cb.checked);
       applyFilters();
     });
     label.appendChild(cb);
@@ -44,12 +45,21 @@ function renderCountyFilter() {
   }
 
   document.getElementById('select-all').addEventListener('click', () => {
-    countyListEl.querySelectorAll('input').forEach(cb => { cb.checked = true; selectedCounties.add(cb.value); });
+    countyListEl.querySelectorAll('label').forEach(lbl => {
+      const cb = lbl.querySelector('input');
+      cb.checked = true;
+      selectedCounties.add(cb.value);
+      lbl.classList.add('checked');
+    });
     applyFilters();
   });
 
   document.getElementById('select-none').addEventListener('click', () => {
-    countyListEl.querySelectorAll('input').forEach(cb => { cb.checked = false; });
+    countyListEl.querySelectorAll('label').forEach(lbl => {
+      const cb = lbl.querySelector('input');
+      cb.checked = false;
+      lbl.classList.remove('checked');
+    });
     selectedCounties.clear();
     applyFilters();
   });
@@ -167,6 +177,18 @@ function esc(str) {
   d.textContent = str;
   return d.innerHTML;
 }
+
+// Sidebar toggle (mobile)
+const hamburgerBtn = document.getElementById('hamburger-btn');
+const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+function toggleSidebar() {
+  const isOpen = document.body.classList.toggle('sidebar-open');
+  hamburgerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+
+hamburgerBtn.addEventListener('click', toggleSidebar);
+sidebarBackdrop.addEventListener('click', toggleSidebar);
 
 // Expose for llm.js
 window.getFilteredCompanies = () => filteredCompanies;

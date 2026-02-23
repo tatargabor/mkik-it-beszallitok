@@ -41,7 +41,7 @@
 
 ## 7. Verification
 
-- [ ] 7.1 Run full scrape and verify data in SQLite (spot-check ~5 companies)
-- [ ] 7.2 Verify county normalization (no duplicates, correct linking)
-- [ ] 7.3 Verify software records match expected count (~1810)
-- [ ] 7.4 Add npm script: `npm run scrape` to run the scraper
+- [x] 7.1 Run full scrape and verify data in SQLite (spot-check ~5 companies)
+- [x] 7.2 Verify county normalization (no duplicates, correct linking)
+- [x] 7.3 Verify software records match expected count (~1810)
+- [x] 7.4 Add npm script: `npm run scrape` to run the scraper

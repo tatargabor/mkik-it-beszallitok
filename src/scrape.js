@@ -71,6 +71,8 @@ async function main() {
   const supplierIds = [...allIds];
   const details = await scrapeDetails(supplierIds);
 
+  // Save tenders as reference table (global list, same on all pages)
+  let tendersSaved = false;
   // Insert details in batches of 100 to avoid memory pressure
   const BATCH_SIZE = 100;
   for (let i = 0; i < details.length; i += BATCH_SIZE) {
@@ -78,8 +80,12 @@ async function main() {
     db.transaction(() => {
       for (const d of batch) {
         db.updateCompanyDetail(d);
-        if (d.tenders && d.tenders.length > 0) {
-          db.linkCompanyTenders(d.id, d.tenders);
+        // Save tender reference list once (from first page that has them)
+        if (!tendersSaved && d.tenders && d.tenders.length > 0) {
+          for (const t of d.tenders) {
+            db.upsertTender(t);
+          }
+          tendersSaved = true;
         }
       }
     });

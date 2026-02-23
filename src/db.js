@@ -195,6 +195,10 @@ export function createDb(dbPath) {
     return db.transaction(fn)();
   }
 
+  function upsertTender(tender) {
+    stmts.upsertTender.run({ id: tender.id, name: tender.name });
+  }
+
   return {
     db,
     insertCompanyBasic,
@@ -203,6 +207,7 @@ export function createDb(dbPath) {
     linkCompanyTenders,
     insertSoftware,
     deleteSoftwaresByCompany,
+    upsertTender,
     transaction,
   };
 }

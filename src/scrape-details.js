@@ -103,7 +103,9 @@ function parseDetailPage(id, html) {
   const casePanel = $('h3:contains("Esettanulmány")').closest('.panel');
   const case_study = casePanel.find('.panel-body').text().trim() || null;
 
-  // Tenders from select options
+  // Tenders from select options (global reference list, same on every page)
+  // We save these as a reference table but DON'T link them per-company since
+  // the select is the same on every page. Actual participation requires AJAX calls.
   const tenders = [];
   $('select#tenderID option[value]').each((_, opt) => {
     const val = $(opt).attr('value');
@@ -131,49 +133,40 @@ function parseDetailPage(id, html) {
 
 function parseAddress(raw) {
   if (!raw) return { zip: null, city: null, address: null };
-  // Address format: "6724SzegedGelei József u. 5." or "6724 Szeged Gelei József u. 5."
-  // Try to extract zip (4 digits at start)
+  // Address format: "6724SzegedGelei József u. 5." (no spaces) or "6724 Szeged Gelei József u. 5."
   const zipMatch = raw.match(/^(\d{4})\s*/);
   if (!zipMatch) return { zip: null, city: null, address: raw.trim() };
 
   const zip = zipMatch[1];
-  let rest = raw.slice(zipMatch[0].length).trim();
+  let rest = raw.slice(zipMatch[0].length);
 
-  // City: usually a word with capital letter before the street
-  // Common pattern: city is the first word(s) before typical street indicators
-  const streetIndicators = /\b(utca|út|u\.|tér|köz|sor|körút|krt\.|sétány|dűlő|fasor|lakótelep|ltp\.|park|sugárút|rakpart|lépcső|stny\.|puszta|major|tag|domb|hegy|liget)\b/i;
-  const match = rest.match(streetIndicators);
-
-  if (match) {
-    // Find where the street part starts - take some characters before the indicator
-    const idx = match.index;
-    // Walk backwards to find where the city name ends and street name begins
-    // Heuristic: find the last uppercase letter sequence before the indicator
-    let cityEnd = idx;
-    for (let i = idx - 1; i >= 0; i--) {
-      if (rest[i] === ' ') {
-        // Check if the word before this space could be part of the street name
-        const beforeSpace = rest.substring(0, i).trim();
-        const afterSpace = rest.substring(i + 1, idx).trim();
-        // If afterSpace starts with a capital letter and is short, it's likely street name start
-        if (afterSpace && /^[A-ZÁÉÍÓÖŐÚÜŰ]/.test(afterSpace)) {
-          cityEnd = i;
-          break;
-        }
-      }
+  // If there are spaces, try space-based split first
+  if (rest.includes(' ')) {
+    // Try to find city/street boundary using lowercase→uppercase transition
+    // "KecskemétKőhíd u. 12." → split at "t" + "K"
+    const transitionMatch = rest.match(/^([A-ZÁÉÍÓÖŐÚÜŰa-záéíóöőúüű]+?[a-záéíóöőúüű])([A-ZÁÉÍÓÖŐÚÜŰ])/);
+    if (transitionMatch) {
+      const city = transitionMatch[1];
+      const street = rest.slice(city.length).trim();
+      return { zip, city, address: street || null };
     }
-    const city = rest.substring(0, cityEnd).trim();
-    const address = rest.substring(cityEnd).trim();
-    return { zip, city: city || null, address: address || null };
+
+    // Fallback: first token is city
+    const spaceIdx = rest.indexOf(' ');
+    if (spaceIdx > 0) {
+      return { zip, city: rest.substring(0, spaceIdx).trim(), address: rest.substring(spaceIdx + 1).trim() };
+    }
+  } else {
+    // No spaces at all - try lowercase→uppercase transition
+    const transitionMatch = rest.match(/^([A-ZÁÉÍÓÖŐÚÜŰa-záéíóöőúüű]+?[a-záéíóöőúüű])([A-ZÁÉÍÓÖŐÚÜŰ])/);
+    if (transitionMatch) {
+      const city = transitionMatch[1];
+      const street = rest.slice(city.length).trim();
+      return { zip, city, address: street || null };
+    }
   }
 
-  // Fallback: first word is city
-  const spaceIdx = rest.indexOf(' ');
-  if (spaceIdx > 0) {
-    return { zip, city: rest.substring(0, spaceIdx), address: rest.substring(spaceIdx + 1).trim() };
-  }
-
-  return { zip, city: rest || null, address: null };
+  return { zip, city: rest.trim() || null, address: null };
 }
 
 function sleep(ms) {

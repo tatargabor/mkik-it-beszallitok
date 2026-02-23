@@ -103,6 +103,19 @@ function parseDetailPage(id, html) {
   const casePanel = $('h3:contains("Esettanulmány")').closest('.panel');
   const case_study = casePanel.find('.panel-body').text().trim() || null;
 
+  // Counties - full list from detail page (list page truncates with "...")
+  let countiesRaw = '';
+  $('b i').each((_, el) => {
+    const t = $(el).text().trim();
+    if (t.includes('megye') || t.includes('Budapest') || t.includes('Országos')) {
+      countiesRaw = t;
+      return false; // break
+    }
+  });
+  const counties = countiesRaw
+    ? countiesRaw.split(',').map(c => c.trim()).filter(Boolean)
+    : [];
+
   // Tenders from select options (global reference list, same on every page)
   // We save these as a reference table but DON'T link them per-company since
   // the select is the same on every page. Actual participation requires AJAX calls.
@@ -127,6 +140,7 @@ function parseDetailPage(id, html) {
     website,
     intro,
     case_study,
+    counties,
     tenders,
   };
 }

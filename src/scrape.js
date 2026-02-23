@@ -80,6 +80,10 @@ async function main() {
     db.transaction(() => {
       for (const d of batch) {
         db.updateCompanyDetail(d);
+        // Update counties from detail page (full list, not truncated)
+        if (d.counties && d.counties.length > 0) {
+          db.linkCompanyCounties(d.id, d.counties);
+        }
         // Save tender reference list once (from first page that has them)
         if (!tendersSaved && d.tenders && d.tenders.length > 0) {
           for (const t of d.tenders) {

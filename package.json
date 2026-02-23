@@ -1,0 +1,21 @@
+{
+  "name": "mkik-beszallito",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/scrape.js",
+  "scripts": {
+    "scrape": "NODE_TLS_REJECT_UNAUTHORIZED=0 node src/scrape.js",
+    "export": "node src/export-json.js",
+    "serve": "npx -y serve docs"
+  },
+  "keywords": [
+    "mkik",
+    "scraper",
+    "suppliers"
+  ],
+  "description": "MKIK Vállalkozz Digitálisan beszállító adatbázis scraper",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "cheerio": "^1.2.0"
+  }
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MKIK Beszállító Kereső</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>MKIK Beszállító Kereső</h1>
+    <button id="settings-btn" title="Beállítások">&#9881; Beállítások</button>
+  </header>
+
+  <div class="container">
+    <aside id="sidebar">
+      <h2>Megyék</h2>
+      <div class="county-actions">
+        <button id="select-all">Mind</button>
+        <button id="select-none">Egyik sem</button>
+      </div>
+      <div id="county-list"></div>
+    </aside>
+
+    <main>
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Keresés (cégnév, város, bemutatkozás, szoftver...)">
+        <span id="result-count">Találatok: 0 cég</span>
+      </div>
+
+      <div id="company-list"></div>
+
+      <div id="llm-section">
+        <h2>Kérdezd meg az AI-t a szűrt cégekről</h2>
+        <div id="llm-no-key" class="llm-notice">
+          Állítsd be az OpenAI API kulcsot a Beállításokban az AI chat használatához.
+        </div>
+        <div id="llm-chat" class="hidden">
+          <div id="llm-response"></div>
+          <div class="llm-input-row">
+            <textarea id="llm-input" placeholder="Kérdezz valamit a szűrt cégekről..." rows="2"></textarea>
+            <button id="llm-send">Küldés</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Settings modal -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Beállítások</h2>
+      <label for="api-key-input">OpenAI API Key</label>
+      <input type="password" id="api-key-input" placeholder="sk-proj-...">
+      <div id="api-key-display" class="hidden">
+        Mentett kulcs: <code id="api-key-masked"></code>
+      </div>
+      <div class="modal-actions">
+        <button id="api-key-save">Mentés</button>
+        <button id="api-key-delete" class="danger">Törlés</button>
+        <button id="settings-close">Bezárás</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="llm.js"></script>
+</body>
+</html>
